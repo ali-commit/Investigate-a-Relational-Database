@@ -1,0 +1,161 @@
+  < <Question 1>  set 1 > 
+with A as 
+   (
+      SELECT
+         F.title,
+         C.name,
+         count(*) rental_count 
+      from
+         rental R 
+         join
+            inventory I 
+            ON R.inventory_id = I.inventory_id 
+         join
+            film F 
+            on F.film_id = I.film_id 
+         join
+            film_category FC 
+            on FC.film_id = F.film_id 
+         join
+            category C 
+            ON C.category_id = FC.category_id 
+      where
+         C.name in 
+         (
+            'Animation',
+            'Children',
+            'Classics',
+            'Comedy',
+            'Family',
+            'Music'
+         )
+      group by
+         1,
+         2
+   )
+   select
+      * 
+   from
+      A 
+   order by
+      2,
+      1 
+
+
+
+_________________________________________________________________________________________________________________________________________________________
+
+
+  Question set 1 question 2
+
+with standard_quartil as 
+(
+   SELECT
+      title,
+      name,
+      rental_duration,
+      NTILE(4)over(
+   order by
+      rental_duration) standard_quartil 
+   FROM
+      film_category fc 
+      join
+         category c 
+         on c.category_id = fc.category_id 
+      join
+         film f 
+         on f.film_id = fc.film_id
+)
+SELECT
+   * 
+from
+   standard_quartil 
+where
+   name in 
+   (
+      'Animation',
+      'Children',
+      'Classics',
+      'Comedy',
+      'Family',
+      'Music'
+   )
+group by
+   1,
+   2,
+   3,
+   4 
+order by
+   3
+
+
+
+___________________________________________________________________________________________________________________________________________________________
+question set 1 question 3 
+
+with standard_quartil as 
+(
+   SELECT
+      title,
+      name,
+      rental_duration,
+      NTILE(4)over (
+   order by
+      rental_duration) standard_quartil 
+   FROM
+      film_category fc 
+      join
+         category c 
+         on c.category_id = fc.category_id 
+      join
+         film f 
+         on f.film_id = fc.film_id 
+   where
+      name in 
+      (
+         'Animation',
+         'Children',
+         'Classics',
+         'Comedy',
+         'Family',
+         'Music'
+      )
+)
+SELECT
+   name,
+   standard_quartil,
+   count (*) counts 
+from
+   standard_quartil 
+group by
+   1,
+   2 
+order by
+   1,
+   2
+
+___________________________________________________________________________________________________________________________________________________________
+
+question set 2 questin 1 
+SELECT
+   Date_part('month', rental_date) rental_month,
+   Date_part('year', rental_date) rental_year,
+   SR.store_id store_id,
+   count(*) Count_rentals 
+from
+   rental R 
+   join
+      staff SF 
+      on SF.staff_id = R.staff_id 
+   JOIN
+      store SR 
+      on SR.store_id = SF.store_id 
+where
+   Date_part('month', rental_date) = 7 
+   or Date_part('month', rental_date) = 8 
+group by
+   1,
+   2,
+   3 
+order by
+   4 desc
